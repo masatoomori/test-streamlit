@@ -6,7 +6,7 @@ import pandas as pd
 import streamlit as st
 import plotly.figure_factory as ff
 import plotly.graph_objects as go
-from matplotlib import pyplot as plt
+# from matplotlib import pyplot as plt
 from sklearn.datasets import fetch_california_housing
 
 
@@ -31,15 +31,20 @@ def main():
 
 	# スライドバー
 	st.sidebar.subheader("スライドバー")
-	house_age_min, house_age_max = st.sidebar.slider(label="HouseAge", min_value=0, max_value=100, value=(50, 60))
+	house_age_min, house_age_max = st.sidebar.slider(label="HouseAge", min_value=0, max_value=60, value=(0, 60))
+
+	# セレクトボックス
+	selected_item = st.sidebar.selectbox(label='AveRooms', options=set([int(n) for n in df['AveRooms']]))
 
 	# マルチセレクトボックス
 	selected_items = st.sidebar.multiselect(label="HouseAge", options=df['HouseAge'].unique(), default=df['HouseAge'].unique())
 
 	# 選択された値
+	st.write("AveRooms: {}".format(selected_item))
 	st.write('Selected age: {} - {}'.format(house_age_min, house_age_max))
 
 	# データを絞る
+	df = df[df['AveRooms'].apply(lambda x: int(x) == selected_item)]
 	df = df[df["HouseAge"].between(house_age_min, house_age_max)]
 	df = df[df["HouseAge"].apply(lambda x: x in selected_items)]
 
@@ -52,11 +57,11 @@ def main():
 	st.bar_chart(df.groupby('HouseAge').mean()['MedHouseVal'])
 
 	# ヒストグラム
-	st.subheader("ヒストグラム")
-	fig = plt.figure(figsize=(20, 4))
-	ax = fig.add_subplot()
-	ax.hist(df['HouseAge'], bins=20)
-	st.pyplot(fig)
+	# st.subheader("ヒストグラム")
+	# fig = plt.figure(figsize=(20, 4))
+	# ax = fig.add_subplot()
+	# ax.hist(df['HouseAge'], bins=20)
+	# st.pyplot(fig)
 
 	fig_hist = ff.create_distplot(hist_data=df[['HouseAge']].values.reshape(1, -1), group_labels=['HouseAge'], bin_size=1)		# bin_size はいくつに分割するかではなく、いくつのレコードをまとめるか
 	fig_hist.update_layout(title_text='Histogram')
