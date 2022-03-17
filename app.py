@@ -16,8 +16,6 @@ logger = logging.getLogger(__name__)
 for p in ['sklaern']:
 	logging.getLogger(p).setLevel(logging.WARNING)
 
-DATA_URL= "http://lib.stat.cmu.edu/datasets/boston"
-
 
 def main():
 	housing = fetch_california_housing()
